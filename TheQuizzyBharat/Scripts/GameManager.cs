@@ -4,8 +4,6 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using static GameManager;
-using System.Threading;
 
 public class GameManager : MonoBehaviour
 {
@@ -40,31 +38,27 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     AudioSource MusicBoolSource, SoundBoolSource, RightSource, WrongSource;
 
-    //////////////////////////// Logical Method //////////////////////////////////////
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////// Logical Methods /////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
 
     private void Start()
     {
         var textFile = Resources.Load<TextAsset>("Award And Honour");
-        string textk = textFile.text;
-        Debug.Log(textk);
-        string k = textk.Replace("A", "");
+        //string textk = textFile.text;
+        ////Debug.Log(textFile.text);
+        string k = textFile.text.Replace("A", "");
         string k1 = k.Replace("=", "");
         string[] data = k1.Split(':');
-        Debug.Log(k);
-        Debug.Log(k1);
-        Debug.Log(data);
+        //Debug.Log(k);
+        //Debug.Log(k1);
+        //Debug.Log(data);
 
         foreach (string ss in data)
         {
-            Debug.Log(ss);
+            //Debug.Log(ss);
         }
-
-
-
-
-
-
-
 
         if (CommonScript.instance.MusicBool)
         {
@@ -118,6 +112,90 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    public void SkipLevel(int WatchAds)
+    {
+        SoundClickPlay();
+        if (WatchAds == 1)
+        {
+            Question2++;
+            PlayerPrefs.SetInt("level" + SelectedField, Question2);
+            QuestionSet();
+            //Debug.Log("Level Increase");
+            GamePanel.SetActive(true);
+            ADPanel.SetActive(false);
+            Slider.fillAmount = 1;
+            flag = true;
+        }
+        else
+        {
+            GamePanel.SetActive(true ) ;
+            ADPanel.SetActive(false ) ;
+            flag = true;
+        }
+    }
+    public void CheckAnswer(TextMeshProUGUI OptText)
+    {
+
+        int QuestionsNO = PlayerPrefs.GetInt("level" + SelectedField, 0);
+        Question2 = QuestionsNO;
+        string ans = AllCategory[SelectedField].AllQuestions[QuestionsNO].Answers;
+        OptText.text = OptText.text.Replace(" ", "");
+        ans = ans.Replace(" ", "");
+        if (OptText.text == ans)
+        {
+            if (QuestionsNO + 1 < AllCategory[SelectedField].AllQuestions.Length)
+            {
+                RightSoundBoolPlay();
+                QuestionsNO++;
+                PlayerPrefs.SetInt("level" + SelectedField, QuestionsNO);
+                QuestionSet();
+            }
+            else
+            {
+                WrongSoundBoolPlay();
+                //Debug.Log("Hi");
+                SelectionPanel.SetActive(true);
+                GamePanel.SetActive(false);
+                flag = false;
+            }
+        }
+        else
+        {
+            Slider.fillAmount = 0;
+            //Debug.Log("Answer is wrong");
+            GameOverPanel.SetActive(true);
+        }
+             QuestionsNO1 = Question2;
+    }
+    public void QuestionSet()
+    {
+        int QuestionsNO = PlayerPrefs.GetInt("level" + SelectedField, 0);
+        flag = true;
+        Slider.fillAmount = 1;
+        if (QuestionsNO < AllCategory[SelectedField].AllQuestions.Length)
+        {
+            for (int j = 0; j < AllCategory[SelectedField].AllQuestions.Length; j++)
+            {
+                QuestionsText.text = AllCategory[SelectedField].AllQuestions[QuestionsNO].QuestName;
+
+                //Debug.Log(AllCategory[SelectedField].AllQuestions[QuestionsNO].Answers);
+
+                for (int k = 0; k < AllCategory[SelectedField].AllQuestions[QuestionsNO].AllOptions.Length; k++)
+                {
+                    OptionText[k].text = AllCategory[SelectedField].AllQuestions[QuestionsNO].AllOptions[k].OptionName;
+                }
+            }
+        }
+        else
+        {
+            SelectedCategory++;
+            WinPanel.SetActive(true);
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////// Music Methods /////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
     public void SoundClickPlay()
     {
         SoundBoolSource.Play();
@@ -171,88 +249,9 @@ public class GameManager : MonoBehaviour
         }
     }
     //Selection Field Method
-    public void SkipLevel(int WatchAds)
-    {
-        SoundClickPlay();
-        if (WatchAds == 1)
-        {
-            Question2++;
-            PlayerPrefs.SetInt("level" + SelectedField, Question2);
-            QuestionSet();
-            Debug.Log("Level Increase");
-            GamePanel.SetActive(true);
-            ADPanel.SetActive(false);
-            Slider.fillAmount = 1;
-            flag = true;
-        }
-        else
-        {
-            GamePanel.SetActive(true ) ;
-            ADPanel.SetActive(false ) ;
-            flag = true;
-        }
-    }
-    public void CheckAnswer(TextMeshProUGUI OptText)
-    {
-
-        int QuestionsNO = PlayerPrefs.GetInt("level" + SelectedField, 0);
-        Question2 = QuestionsNO;
-        string ans = AllCategory[SelectedField].AllQuestions[QuestionsNO].Answers;
-        OptText.text = OptText.text.Replace(" ", "");
-        ans = ans.Replace(" ", "");
-        if (OptText.text == ans)
-        {
-            if (QuestionsNO + 1 < AllCategory[SelectedField].AllQuestions.Length)
-            {
-                RightSoundBoolPlay();
-                QuestionsNO++;
-                PlayerPrefs.SetInt("level" + SelectedField, QuestionsNO);
-                QuestionSet();
-            }
-            else
-            {
-                WrongSoundBoolPlay();
-                Debug.Log("Hi");
-                SelectionPanel.SetActive(true);
-                GamePanel.SetActive(false);
-                flag = false;
-            }
-        }
-        else
-        {
-            Slider.fillAmount = 0;
-            Debug.Log("Answer is wrong");
-            GameOverPanel.SetActive(true);
-        }
-             QuestionsNO1 = Question2;
-    }
-    public void QuestionSet()
-    {
-        int QuestionsNO = PlayerPrefs.GetInt("level" + SelectedField, 0);
-        flag = true;
-        Slider.fillAmount = 1;
-        if (QuestionsNO < AllCategory[SelectedField].AllQuestions.Length)
-        {
-            for (int j = 0; j < AllCategory[SelectedField].AllQuestions.Length; j++)
-            {
-                QuestionsText.text = AllCategory[SelectedField].AllQuestions[QuestionsNO].QuestName;
-
-                Debug.Log(AllCategory[SelectedField].AllQuestions[QuestionsNO].Answers);
-
-                for (int k = 0; k < AllCategory[SelectedField].AllQuestions[QuestionsNO].AllOptions.Length; k++)
-                {
-                    OptionText[k].text = AllCategory[SelectedField].AllQuestions[QuestionsNO].AllOptions[k].OptionName;
-                }
-            }
-        }
-        else
-        {
-            SelectedCategory++;
-            WinPanel.SetActive(true);
-        }
-    }
-
-    ////////////////// Local Method ///////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////// Local Methods /////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
     public void GamePanelOpen(int val)
     {
         SoundClickPlay();
@@ -334,10 +333,9 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
-
-
-
-
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////// All Structure ////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////
     [System.Serializable]
     public class catogry
     {

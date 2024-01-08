@@ -35,19 +35,19 @@ public class NotePadManager : MonoBehaviour
         
 
         string textk = textFile.text;
-        //Debug.Log(textk);
+        ////Debug.Log(textk);
         string k = textk;
         
         string[] data = k.Split('=');
 
         //foreach(string k2 in data)
         //{
-        //    Debug.Log(k2);
+        //    //Debug.Log(k2);
         //}
         for (int i = 0; i < data.Length; i++)
         {
             cats[i].Name = data[i];
-            Debug.Log(cats[i].Name);
+            //Debug.Log(cats[i].Name);
         }
 
     }
@@ -81,7 +81,7 @@ public class NotePadManager : MonoBehaviour
             {
                 QuestionsText.text = Allcat[SelectedField].AllQuestions[QuestionsNO].QuestName;
 
-                Debug.Log(Allcat[SelectedField].AllQuestions[QuestionsNO].Answers);
+                //Debug.Log(Allcat[SelectedField].AllQuestions[QuestionsNO].Answers);
 
                 for (int k = 0; k < Allcat[SelectedField].AllQuestions[QuestionsNO].AllOptions.Length; k++)
                 {
@@ -113,7 +113,7 @@ public class NotePadManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("Hi");
+                //Debug.Log("Hi");
                 SelectionPanel.SetActive(true);
                 GamePanel.SetActive(false);
                 flag = false;
@@ -122,7 +122,7 @@ public class NotePadManager : MonoBehaviour
         else
         {
             Slider.fillAmount = 0;
-            Debug.Log("Answer is wrong");
+            //Debug.Log("Answer is wrong");
             GameOverPanel.SetActive(true);
         }
     }
